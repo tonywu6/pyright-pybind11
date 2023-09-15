@@ -6,4 +6,4 @@ dependencies:
   - pip:
       - pyright==1.1.327
       - mypy==1.5.1
-      - ../dist/calculator-0.0.0.tar.gz
+      - '..'

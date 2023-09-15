@@ -12,12 +12,10 @@ make
 
 .venv/bin/stubgen --package calculator --output typings
 
-.venv/bin/hatch build --target sdist
+conda env create --file example/environment.yml --prefix example/.venv
 
-conda env create --file examples/environment.yml --prefix examples/.venv
+./example/.venv/bin/pip show -f calculator
+./example/.venv/bin/python example/main.py
 
-./examples/.venv/bin/pip show -f calculator
-./examples/.venv/bin/python examples/main.py
-
-./examples/.venv/bin/mypy examples/main.py
-./examples/.venv/bin/pyright examples/main.py
+./example/.venv/bin/mypy example/main.py
+./example/.venv/bin/pyright example/main.py

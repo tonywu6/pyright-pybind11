@@ -1,6 +1,6 @@
 # Pyright & pybind11
 
-Run [`./demo.sh`](./demo.sh) to see everything described below.
+Run [`./demo.sh`](./demo.sh) to execute this example from start to finish.
 
 ---
 
@@ -17,18 +17,21 @@ has the following structure:
   - _submodule_ `subtract`
     - `sub(a: int, b: int) -> int`
 
+Tested on macOS 13.5.1 (Apple Silicon) and in a [Dev Container] with Debian
+bullseye.
+
+[Dev Container]: ./.devcontainer/devcontainer.json
+
 ## Prerequisites
 
-- Conda, to manage Python environments and dependencies. Tested using Conda
-  23.5.2
+- Conda, to manage Python environments and dependencies.
 - Your system should also meet the minimum requirements for building C++
   (`make`; `gcc` or `clang`, etc.)
 
-All commands below are run from the root of this repository.
-
 ## Building the bindings
 
-Create a new conda environment in `.venv` and activate it.
+Create a new conda environment in `.venv` using
+[`environment.yml`](./environment.yml), and then activate it.
 
 ```bash
 conda env create --file environment.yml --prefix .venv \
@@ -40,23 +43,21 @@ The environment uses Python 3.8.17, and installs the following packages:
 - pybind11
 - [CMake], for generating the build system
 - [MyPy], for generating type stubs
-- [Hatch], for packaging Python distributions
 
 [CMake]: https://pypi.org/project/cmake/
 [MyPy]: http://mypy.readthedocs.io
-[Hatch]: http://hatch.pypa.io
 
 Conda also installs the necessary Python/pybind11 headers as well as pybind's
 CMake input files, which CMake will need.
 
-Generate the build system. CMake will use [`CMakelists.txt`](./CMakeLists.txt).
+Generate the build system:
 
 ```bash
 cmake .
 ```
 
-Your command output should look similar to the following (paths and compiler
-versions may vary):
+CMake will use [`CMakelists.txt`](./CMakeLists.txt). Your command output should
+look similar to the following (paths and compiler versions may vary):
 
 > ```
 > -- The CXX compiler identification is AppleClang 14.0.3.14030022
@@ -73,14 +74,14 @@ versions may vary):
 > -- Build files have been written to: ...
 > ```
 
-Build the bindings. This creates a dynamic library `calculator.*.so` in the
-current directory.
+Build the bindings:
 
 ```bash
 make
 ```
 
-Your command output should look similar to the following:
+This creates a dynamic library `calculator.*.so` in the current directory. Your
+command output should look similar to the following:
 
 > ```
 > [ 50%] Building CXX object CMakeFiles/calculator.dir/calculator.cpp.o
@@ -96,9 +97,9 @@ It is now possible to import the module from Python:
 ... 3
 ```
 
-## Generate type stubs
+## Generating type stubs
 
-We will use MyPy's [stubgen] command.
+Generate type stubs from the built bindings using MyPy's [stubgen] command:
 
 [stubgen]: https://mypy.readthedocs.io/en/stable/stubgen.html
 
@@ -113,28 +114,14 @@ The stubs will be written to `typings/calculator`.
 > Generated files under typings/calculator/
 > ```
 
-## Package
+## Installing & testing
 
-We will use [hatch] to create an installable Python distribution.
-
-```bash
-hatch build --target sdist
-```
-
-Hatch reads package metadata from `pyproject.toml` and creates a [source
-distribution][sdist] `calculator-0.0.0.tar.gz` in the `dist` directory. This
-`.tar.gz` file will be installable with `pip`.
-
-[sdist]:
-  https://packaging.python.org/en/latest/glossary/#term-Source-Distribution-or-sdist
-
-## Install & test
-
-We will create a new conda environment in `examples/.venv` and activate it.
+Create a new conda environment inside `example/.venv` using
+[`example/environment.yml`](./example/environment.yml), and then activate it:
 
 ```bash
-conda env create --file examples/environment.yml --prefix examples/.venv \
-  && conda activate $(realpath examples/.venv)
+conda env create --file example/environment.yml --prefix example/.venv \
+  && conda activate $(realpath example/.venv)
 ```
 
 This time, the environment installs [MyPy], [Pyright], and the `calculator`
@@ -142,7 +129,7 @@ package we just built.
 
 [Pyright]: https://microsoft.github.io/pyright/
 
-We can see what files from our package were installed:
+See what files were installed:
 
 ```
 pip show -f calculator
@@ -159,10 +146,10 @@ pip show -f calculator
 >   calculator/subtract.pyi
 > ```
 
-Run the example script.
+Run the example script:
 
 ```bash
-python examples/main.py
+python example/main.py
 ```
 
 > ```
@@ -172,7 +159,7 @@ python examples/main.py
 
 ## Comparing MyPy and Pyright
 
-The example script deliberately contains a typing error:
+The example script contains a typing error:
 
 ```py
 # def add(a: int, b: int) -> int:
@@ -182,24 +169,24 @@ add(41, "1")
 Type-check with MyPy:
 
 ```bash
-mypy examples/main.py
+mypy example/main.py
 ```
 
 > ```
-> examples/main.py:10: error: Argument 2 to "sub" has incompatible type "str"; expected "int"  [arg-type]
+> example/main.py:10: error: Argument 2 to "sub" has incompatible type "str"; expected "int"  [arg-type]
 > Found 1 error in 1 file (checked 1 source file)
 > ```
 
 Type-check with Pyright:
 
 ```bash
-pyright examples/main.py
+pyright example/main.py
 ```
 
 > ```
-> .../examples/main.py
->   .../examples/main.py:3:6 - warning: Import "calculator.subtract" could not be resolved from source (reportMissingModuleSource)
->   .../examples/main.py:10:37 - error: Argument of type "Literal['1']" cannot be assigned to parameter "arg1" of type "int" in function "sub"
+> .../example/main.py
+>   .../example/main.py:3:6 - warning: Import "calculator.subtract" could not be resolved from source (reportMissingModuleSource)
+>   .../example/main.py:10:37 - error: Argument of type "Literal['1']" cannot be assigned to parameter "arg1" of type "int" in function "sub"
 >     "Literal['1']" is incompatible with "int" (reportGeneralTypeIssues)
 > 1 error, 1 warning, 0 informations
 > ```
@@ -208,6 +195,6 @@ pyright examples/main.py
 corresponding source on the filesystem (the entire `calculator` package is in a
 single `.so` file).
 
-Here Pyright warns about not being able to resolve it from source, but MyPy does
-not. Notice also that Pyright still reports the type error correctly thanks to
-our type stubs.
+Here, Pyright warns about not being able to resolve it from source, but MyPy
+does not. Notice also that Pyright still reports the type error correctly thanks
+to our type stubs.
