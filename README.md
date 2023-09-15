@@ -1,6 +1,6 @@
 # Pyright & pybind11
 
-Run `./demo.sh` to see everything described below.
+Run [`./demo.sh`](./demo.sh) to see everything described below.
 
 ---
 
@@ -162,7 +162,7 @@ pip show -f calculator
 Run the example script.
 
 ```bash
-python examples/test.py
+python examples/main.py
 ```
 
 > ```

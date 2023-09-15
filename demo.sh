@@ -16,5 +16,8 @@ make
 
 conda env create --file examples/environment.yml --prefix examples/.venv
 
+./examples/.venv/bin/pip show -f calculator
+./examples/.venv/bin/python examples/main.py
+
 ./examples/.venv/bin/mypy examples/main.py
 ./examples/.venv/bin/pyright examples/main.py
