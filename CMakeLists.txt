@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.15...3.22)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(PYTHON_EXECUTABLE .venv/bin/python3.8)
 
 project(calculator LANGUAGES CXX)
 
