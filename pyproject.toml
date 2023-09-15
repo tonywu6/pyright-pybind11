@@ -1,0 +1,27 @@
+[project]
+classifiers = [
+  "Private :: Do Not Upload",
+]
+name = "calculator"
+requires-python = ">=3.8,<3.9"
+version = "0.0.0"
+
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[tool.hatch.build]
+artifacts = [
+  "*.so",
+  "*.dll",
+  "*.pyi",
+  "!**/.venv/**/*",
+  "!**/dist/**/*",
+]
+exclude = ["examples/**/*"]
+
+[tool.hatch.build.targets.wheel]
+sources = ["typings"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"py.typed" = "calculator/py.typed"

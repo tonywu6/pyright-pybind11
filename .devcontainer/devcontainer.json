@@ -1,0 +1,7 @@
+{
+  "name": "pyright-pybind11",
+  "image": "mcr.microsoft.com/devcontainers/miniconda:0-3",
+  "containerUser": "vscode",
+  "postCreateCommand": "conda init bash",
+  "waitFor": "postCreateCommand"
+}
